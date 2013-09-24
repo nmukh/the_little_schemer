@@ -170,4 +170,32 @@
 
 (define fullfun?
   (lambda(fun)
-    (set?(seconds fun))))
+    (set? (second fun))))
+
+;;Chapter 8 - Lambda the Ultimate
+ 
+(define eq?-c
+  (lambda(a)
+    (lambda(x)
+      (eq? x a))))
+
+(define rember-f
+  (lambda(test?)
+    (lambda(a l)
+      (cond
+        ((null? l)'())
+        ((test? (car l) a)(cdr l))
+        (else (cons (car l)
+                    ((rember-f test?) a 
+                                      (cdr l))))))))
+
+(define insert-g
+  (lambda(seq)
+    (lambda(new old l)
+      (cond
+        ((null? l)('()))
+        ((eq? (car l) old)
+         (seq new old (cdr l)))
+        (else (cons (car l)
+                    ((insert-g seq) new old
+                                    (cdr l))))))))
