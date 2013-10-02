@@ -40,6 +40,16 @@
        #f)
       (else (eq? a1 a2)))))
 
+(define pick
+  (lambda (n lat)
+    (cond
+      ((zero? (sub1 n))(car lat))
+      (else (pick (sub1 n)(cdr lat))))))
+
+(define one?
+  (lambda(n)
+    (cond
+      (else (= n 1)))))
 
 ;;Chapter 5
 (define eqlist?
@@ -66,6 +76,7 @@
       ((or (atom? s1)(atom? s2))
        #f)
       (else (eqlist? s1 s2)))))
+
 
 ;;Chapter 7
 (define set?
@@ -199,3 +210,69 @@
         (else (cons (car l)
                     ((insert-g seq) new old
                                     (cdr l))))))))
+                                                                      
+(define multirember-f
+    (lambda(test?)
+      (lambda(a lat)
+        (cond
+          ((null? lat) '())
+          ((test? a (car lat))
+           ((multirember-f test?) a 
+                                  (cdr lat)))
+           (else (cons (car lat)((multirember-f test?) a (cdr lat))))))))
+
+(define multirember&co
+  (lambda (a lat col)
+    (cond
+      ((null? lat)
+       (col '() '()))
+      ((eq? (car lat) a)
+       (multirember&co a
+       (cdr lat)
+       (lambda (newlat seen)
+         (col newlat
+              (cons (car lat) seen)))))
+      (else
+       (multirember&co a
+                       (cdr lat)
+                       (lambda (newlat seen)
+                         (col (cons (car lat) newlat)
+                              seen)))))))
+                       
+  
+  
+;;9. and again and again
+
+(define looking
+  (lambda (a lat)
+    (keep-looking a (pick 1 lat) lat)))
+
+(define keep-looking
+  (lambda (a sorn lat)
+    (cond
+      ((number? sorn)
+       (keep-looking a (pick sorn lat) lat))
+      (else (eq? sorn a)))))
+
+(define eternity
+  (lambda(x)
+    (eternity x)))
+
+;;Collatz
+(define C
+  (lambda(n)
+    (cond
+      ((one? n) 1)
+      (else
+       (cond
+         ((even? n) (C (/ n 2)))
+         (else (C (add1 (* 3 n)))))))))
+
+;;Ackermann
+(define A
+  (lambda(n m)
+    (cond
+      ((zero? n) (add1 m))
+      ((zero? m) (A (sub1 n) 1))
+      (else (A (sub1 n)
+               (A n (sub1 m)))))))
